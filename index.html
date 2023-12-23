@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Игра по скорости набора слов в минуту</title>
+  </head>
+  <body>
+    <div class="container">
+      <div id="timer" class="timer">1:00</div>
+      <p>Наберите как можно больше слов за минуту</p>
+      <input type="text" id="userInput" placeholder="Введите слово" oninput="compareWords(event)">
+      <button onclick="startGame()">Начать игру</button>
+      <div id="wordContainer"></div>
+      <div id="result"></div>
+      <script>
+        "use strict";
+
+        const words = ['он', 'машинально', 'поднял', 'голову', 'и', 'вытянул', 'руки', 'по', 'швам', 'полицейский', 'ткнул', 'его',
+      'кончиком', 'дубинки', 'в', 'лоб', 'раздался', 'треск', 'его', 'ударило', 'электрическим', 'током', 'да', 'так', 'сильно', 
+      'что', 'искры', 'полетели', 'из', 'глаз', 'в', 'голове', 'загудело', 'и', 'он', 'зашатался', 'не', 'в', 'силах', 'устоять', 'на', 
+      'ногах', 'cхватив', 'незнайку', 'за', 'шиворот', 'полицейский', 'принялся', 'шарить', 'у', 'него', 'в', 'карманах', 'и',
+      'ничего', 'в', 'них', 'не', 'обнаружив', 'потащил', 'его', 'сквозь', 'толпу', 'которая', 'начала', 'собираться', 'вокруг'];
+        let timerInterval;
+        let timeLeft = 60;
+        let timerStarted = false;
+        let wordIndex = 0;
+        let correctWords = 0;
+        let userInput = document.getElementById('userInput');
+        let resultDisplay = document.getElementById('result');
+
+        function startGame() {
+          if (!timerStarted) {
+            timerStarted = true;
+            timerInterval = setInterval(updateTimer, 1000);
+            userInput.value = '';
+            userInput.focus();
+            wordIndex = 0;
+            correctWords = 0;
+            resultDisplay.textContent = '';
+            updateWordContainer();
+          }
+        }
+
+        function updateTimer() {
+          const timerElement = document.getElementById('timer');
+          const minutes = Math.floor(timeLeft / 60);
+          let seconds = timeLeft % 60;
+
+          if (seconds < 10) {
+            seconds = "0" + seconds;
+          }
+          timerElement.textContent = minutes + ":" + seconds;
+
+          if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            timerStarted = false;
+            resultDisplay.textContent = "Ваш результат: " + correctWords + " слов в минуту.";
+          }
+
+          timeLeft--;
+        }
+
+        function updateWordContainer() {
+          const wordContainer = document.getElementById('wordContainer');
+          wordContainer.textContent = words.slice(wordIndex, wordIndex + 10).join(' ');
+        }
+
+        function compareWords() {
+          if (timerStarted) {
+            const inputWords = userInput.value.trim().split(' ');
+            const currentWords = words.slice(wordIndex, wordIndex + inputWords.length);
+            let correct = true;
+
+            for (let i = 0; i < inputWords.length; i++) {
+              if (inputWords[i] !== currentWords[i]) {
+                correct = false;
+                break;
+              }
+            }
+            if (correct) {
+              wordIndex += inputWords.length;
+              correctWords += inputWords.length;
+              updateWordContainer();
+              userInput.value = '';
+            }
+          }
+        }
+      </script>
+    </div>
+  </body>
+</html>
